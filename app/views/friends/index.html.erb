@@ -1,0 +1,40 @@
+<%= form_tag(friends_path, method: :get) do  %>
+  <table>
+    <% if current_user.provider == "facebook" %>
+      <% unless current_user.token.blank?%>
+        <% unless @fb_friends.blank? %>
+          <%#= will_paginate @fb_friends %>
+          <% @fb_friends.each do |fb_friend| %>
+            <tr>
+              <td>
+                <%= check_box_tag "friends[#{fb_friend.raw_attributes['id']}]", "#{fb_friend.raw_attributes['id']}" %>
+                <%= image_tag "http://graph.facebook.com/#{fb_friend.identifier}/picture", :class => 'float-left' %>
+                <%= fb_friend.raw_attributes['name'] %>
+              </td>
+            </tr>
+          <% end %>      
+        <% else %>
+          You do not have any friends 
+        <% end %>
+      <% else %>
+        <%= link_to('Connect to facebook', user_omniauth_authorize_path('facebook') ) %>
+      <% end %>
+    <% else %>
+    <%# debugger %>
+      <% @friends.attrs[:users].each do |friend| %>
+        <tr>
+          <td>
+            <%= check_box_tag "friends[#{friend[:id]}]", "#{friend[:id]}" %>
+            <%= friend[:name] %>  
+          </td>
+        </tr>
+      <% end %>  
+    <% end %> 
+    <tr>
+      <td>
+        <%= text_area_tag "task" %><br>
+        <%= submit_tag "Send Message" %>
+      </td>
+    </tr>    
+  </table>  
+<% end %>  
